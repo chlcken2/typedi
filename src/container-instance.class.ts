@@ -1,9 +1,11 @@
 import { ContainerRegistry } from './container-registry.class';
+import { Handler } from './interfaces/handler.interface';
 import { ContainerIdentifier } from './types/container-identifier.type';
 
 export class ContainerInstance {
   public readonly id!: ContainerIdentifier;
   private disposed: boolean = false;
+  private readonly handlers: Handler[] = [];
 
   constructor(id: ContainerIdentifier) {
     this.id = id;

@@ -28,6 +28,19 @@ export class ContainerInstance {
   //of() 메서드는 특정 ID를 가진 컨테이너 인스턴스를 가져오는 기능
   public of(containerId: ContainerIdentifier = 'default'): ContainerInstance {
     this.throwIfDisposed();
-    return ContainerRegistry.defaultContainer;
+
+    if (containerId === 'default') {
+      return ContainerRegistry.defaultContainer;
+    }
+
+    /**
+     * 컨테이너 인스턴스가 이미 존재하는지 확인
+     * 존재하면 해당 인스턴스 반환
+     * 존재하지 않으면 새로 생성
+     */
+    if (ContainerRegistry.hasContainer(containerId)) {
+      return ContainerRegistry.getContainer(containerId);
+    }
+    return new ContainerInstance(containerId);
   }
 }

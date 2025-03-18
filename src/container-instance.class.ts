@@ -6,6 +6,7 @@ export class ContainerInstance {
   public readonly id!: ContainerIdentifier;
   private disposed: boolean = false;
   private readonly handlers: Handler[] = [];
+private metadataMap: Map<ServiceIdentifier, ServiceMetadata<unknown>> = new Map();
 
   constructor(id: ContainerIdentifier) {
     this.id = id;

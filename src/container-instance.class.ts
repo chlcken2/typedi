@@ -1,12 +1,15 @@
 import { ContainerRegistry } from './container-registry.class';
 import { Handler } from './interfaces/handler.interface';
+import { ServiceMetadata } from './interfaces/service-metadata.interface';
 import { ContainerIdentifier } from './types/container-identifier.type';
+import { ContainerScope } from './types/container-scope.type';
+import { ServiceIdentifier, Token } from './types/service-identifier.type';
 
 export class ContainerInstance {
   public readonly id!: ContainerIdentifier;
   private disposed: boolean = false;
   private readonly handlers: Handler[] = [];
-private metadataMap: Map<ServiceIdentifier, ServiceMetadata<unknown>> = new Map();
+  private metadataMap: Map<ServiceIdentifier, ServiceMetadata<unknown>> = new Map();
 
   constructor(id: ContainerIdentifier) {
     this.id = id;
@@ -45,5 +48,47 @@ private metadataMap: Map<ServiceIdentifier, ServiceMetadata<unknown>> = new Map(
       return ContainerRegistry.getContainer(containerId);
     }
     return new ContainerInstance(containerId);
+  }
+
+  public async dispose(): Promise<void> {
+    this.reset({ strategy: 'resetServices' });
+    this.disposed = true;
+    await Promise.resolve();
+  }
+
+  public reset(options: { strategy: 'resetValue' | 'resetServices' } = { strategy: 'resetValue' }): this {
+    this.throwIfDisposed();
+
+    switch (options.strategy) {
+      case 'resetValue':
+        this.metadataMap.forEach((service) => this.disposeServiceInstance(service));
+        break;
+      case 'resetServices':
+        this.metadataMap.forEach((service) => this.disposeServiceInstance(service));
+        this.metadataMap.clear();
+        this.multiServiceIds.clear();
+        break;
+      default:
+        throw new Error('received invalid reset strategy');
+    }
+    return this;
+  }
+
+  private disposeServiceInstance(serviceMetadata: ServiceMetadata, force = false) {
+    this.throwIfDisposed();
+
+    const shouldResetValue = force || !!serviceMetadata.type || !!serviceMetadata.factory;
+
+    if (shouldResetValue) {
+      if (typeof (serviceMetadata?.value as Record<string, unknown>)['dispose'] === 'function') {
+        try {
+          (serviceMetadata.value as { dispose: CallableFunction }).dispose();
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+
+    serviceMetadata.value = undefined;
   }
 }

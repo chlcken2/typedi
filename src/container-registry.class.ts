@@ -3,6 +3,7 @@ import { ContainerIdentifier } from './types/container-identifier.type';
 
 export class ContainerRegistry {
   public static readonly containerMap: Map<ContainerIdentifier, ContainerInstance> = new Map();
+
   /**
    * 여러개의 컨테이너를 관리
    * 특정 ID로 컨테이너를 조회
@@ -21,7 +22,7 @@ export class ContainerRegistry {
       // TODO: Create custom error for this.
       throw new Error('You cannot register a container with the "default" ID.');
     }
-    // ContainerRegistry.containerMap.set(container.id, container);
+    ContainerRegistry.containerMap.set(container.id, container);
   }
 
   public static hasContainer(id: ContainerIdentifier): boolean {
@@ -36,5 +37,16 @@ export class ContainerRegistry {
       throw new Error('No container is registered');
     }
     return registeredContainer;
+  }
+
+  public static async removeContainer(container: ContainerInstance): Promise<void> {
+    const registedContainer = ContainerRegistry.containerMap.get(container.id);
+
+    if (registedContainer === undefined) {
+      throw new Error('no container is registered');
+    }
+
+    ContainerRegistry.containerMap.delete(container.id);
+    await registedContainer.dispose();
   }
 }

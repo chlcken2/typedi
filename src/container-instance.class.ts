@@ -20,6 +20,8 @@ private metadataMap: Map<ServiceIdentifier, ServiceMetadata<unknown>> = new Map(
     this.handlers = ContainerRegistry.defaultContainer?.handlers || [];
   }
 
+  private multiServiceIds: Map<ServiceIdentifier, { token: Token<unknown>[]; scope: ContainerScope }> = new Map();
+
   private throwIfDisposed() {
     if (this.disposed) {
       throw new Error('Cannot use container after it has been disposed.');

@@ -1,4 +1,7 @@
 import { ContainerRegistry } from './container-registry.class';
+import { EMPTY_VALUE } from './empty.const';
+import { CannotInstantiateValueError } from './error/cannot-instantiate-value.error';
+import { ServiceNotFoundError } from './error/service-not-found.error';
 import { Handler } from './interfaces/handler.interface';
 import { ServiceMetadata } from './interfaces/service-metadata.interface';
 import { ContainerIdentifier } from './types/container-identifier.type';
@@ -90,5 +93,65 @@ export class ContainerInstance {
     }
 
     serviceMetadata.value = undefined;
+  }
+
+  public get<T = unknown>(id: ServiceIdentifier<T>): T {
+    // 컨테이너가 사용 중이지 않는지 확인
+    this.throwIfDisposed();
+
+    //전역, 지역 메타데이터 조회
+    const global = ContainerRegistry.defaultContainer.metadataMap.get(id);
+    const local = this.metadataMap.get(id);
+
+    //싱글톤이면 전역, 아니면 지역
+    const metadata = global?.scope === 'singleton' ? global : local;
+
+    // 단일 인스턴스를 반환하는 함수에서, 멀티플 인스턴스 존재 시 에러 발생
+    if (metadata && metadata.multiple === true) {
+      throw new Error('cannot resolve multiple value');
+    }
+
+    // 메타데이터가 존재하면 값 반환
+    if (metadata) {
+      return this.getServiceValue(metadata);
+    }
+
+    //전역 컨테이너에서 찾았으면서 현재 컨테이너가 전역 컨테이너가 아닌 경우
+    if (global && this !== ContainerRegistry.defaultContainer) {
+      const clonedService = { ...global };
+      clonedService.value = EMPTY_VALUE;
+
+      this.set(clonedService);
+
+      const value = this.getServiceValue(clonedService);
+      this.set({ ...clonedService, value });
+      return value;
+    }
+    throw new ServiceNotFoundError(id);
+  }
+
+  private getServiceValue(serviceMetadata: ServiceMetadata<unknown>): any {
+    let value: unknown = EMPTY_VALUE;
+
+    if (serviceMetadata.value !== EMPTY_VALUE) {
+      return serviceMetadata.value;
+    }
+
+    if (!serviceMetadata.factory && !serviceMetadata.type) {
+      throw new CannotInstantiateValueError(serviceMetadata.id);
+    }
+
+    if (serviceMetadata.factory) {
+      if (serviceMetadata.factory instanceof Array) {
+        let factoryInstance;
+
+        try {
+          factoryInstance = this.get<any>(serviceMetadata.factory[0]);
+        } catch (error) {
+          if (error instanceof ServiceNotFoundError) {
+          }
+        }
+      }
+    }
   }
 }

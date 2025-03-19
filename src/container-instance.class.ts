@@ -4,6 +4,7 @@ import { CannotInstantiateValueError } from './error/cannot-instantiate-value.er
 import { ServiceNotFoundError } from './error/service-not-found.error';
 import { Handler } from './interfaces/handler.interface';
 import { ServiceMetadata } from './interfaces/service-metadata.interface';
+import { ServiceOptions } from './types/service-options.type';
 import { ContainerIdentifier } from './types/container-identifier.type';
 import { ContainerScope } from './types/container-scope.type';
 import { ServiceIdentifier, Token } from './types/service-identifier.type';
@@ -128,6 +129,55 @@ export class ContainerInstance {
       return value;
     }
     throw new ServiceNotFoundError(id);
+  }
+
+  public set<T = unknown>(serviceOptions: ServiceOptions<T>): this {
+    this.throwIfDisposed();
+
+    if (serviceOptions.scope === 'singleton' && ContainerRegistry.defaultContainer !== this) {
+      ContainerRegistry.defaultContainer.set(serviceOptions);
+      return this;
+    }
+
+    const newMetadata: ServiceMetadata<T> = {
+      id: ((serviceOptions as any).id || (serviceOptions as any).type) as ServiceIdentifier,
+      type: (serviceOptions as ServiceMetadata<T>).type || null,
+      factory: (serviceOptions as ServiceMetadata<T>).factory,
+      value: (serviceOptions as ServiceMetadata<T>).value || EMPTY_VALUE,
+      multiple: serviceOptions.multiple || false,
+      eager: serviceOptions.eager || false,
+      scope: serviceOptions.scope || 'container',
+      /** We allow overriding the above options via the received config object. */
+      ...serviceOptions,
+      referencedBy: new Map().set(this.id, this),
+    };
+
+    if (serviceOptions.multiple) {
+      const maskedToken = new Token(`MultiMaskToken-${newMetadata.id.toString()}`);
+      const existingMultiGroup = this.multiServiceIds.get(newMetadata.id);
+
+      if (existingMultiGroup) {
+        existingMultiGroup.token.push(maskedToken);
+      } else {
+        this.multiServiceIds.set(newMetadata.id, { token: [maskedToken], scope: newMetadata.scope });
+      }
+
+      newMetadata.id = maskedToken;
+      newMetadata.multiple = true;
+    }
+
+    const existringMetadata = this.metadataMap.get(newMetadata.id);
+
+    if (existringMetadata) {
+      Object.assign(existringMetadata, newMetadata);
+    } else {
+      this.metadataMap.set(newMetadata.id, newMetadata);
+    }
+    if (newMetadata.eager && newMetadata.scope !== 'transient') {
+      this.get(newMetadata.id);
+    }
+
+    return this;
   }
 
   private getServiceValue(serviceMetadata: ServiceMetadata<unknown>): any {

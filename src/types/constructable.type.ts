@@ -1,1 +1,1 @@
-export type Contructable<T> = new (...args: any[]) => T;
+export type Constructable<T> = new (...args: any[]) => T;

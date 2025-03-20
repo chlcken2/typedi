@@ -1,8 +1,8 @@
 import { AbstractConstructable } from './abstract-constructable.type';
-import { Contructable } from './constructable.type';
+import { Constructable } from './constructable.type';
 
 export type ServiceIdentifier<T = unknown> =
-  | Contructable<T>
+  | Constructable<T>
   | AbstractConstructable<T>
   | CallableFunction
   | Token<T>

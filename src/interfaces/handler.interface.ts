@@ -1,11 +1,11 @@
 import { ContainerInstance } from '../container-instance.class';
-import { Contructable } from '../types/constructable.type';
+import { Constructable } from '../types/constructable.type';
 
 export interface Handler<T = unknown> {
   /**
    * Service object used to apply handler to.
    */
-  object: Contructable<T>;
+  object: Constructable<T>;
 
   /**
    * Class property name to set/replace value of.

@@ -204,4 +204,9 @@ export class ContainerInstance {
       }
     }
   }
+
+  public registerHandler(handler: Handler): ContainerInstance {
+    this.handlers.push(handler);
+    return this;
+  }
 }

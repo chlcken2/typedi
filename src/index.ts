@@ -1,4 +1,4 @@
-import { ContainerRegistry } from "./containerRegistry";
+import { ContainerRegistry } from './containerRegistry';
 
 if (!Reflect || !(Reflect as any).getMetadata) {
   throw new Error('error');

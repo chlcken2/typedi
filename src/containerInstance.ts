@@ -11,4 +11,19 @@ export class ContainerInstance {
     ContainerRegistry.registerContainer(this);
     this.handlers = ContainerRegistry.defaultContainer.handlers || []; // handelr 등록
   }
+
+  public of(containerId: ContainerIdentifier = 'default'): ContainerInstance {
+    if (containerId === 'default') {
+      return ContainerRegistry.defaultContainer;
+    }
+    let container: ContainerInstance;
+
+    if (ContainerRegistry.hasContainer(containerId)) {
+      container = ContainerRegistry.getContainer(containerId);
+    } else {
+      container = new ContainerInstance(containerId);
+    }
+
+    return container;
+  }
 }

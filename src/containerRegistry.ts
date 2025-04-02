@@ -20,4 +20,17 @@ export class ContainerRegistry {
     }
     ContainerRegistry.containerMap.set(container.id, container);
   }
+
+  public static hasContainer(containerId: ContainerIdentifier): boolean {
+    return this.containerMap.has(containerId);
+  }
+
+  public static getContainer(containerId: ContainerIdentifier): ContainerInstance {
+    const registerdContainer = this.containerMap.get(containerId);
+
+    if (registerdContainer === undefined) {
+      throw new Error('not exist');
+    }
+    return registerdContainer;
+  }
 }

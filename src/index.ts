@@ -1,8 +1,8 @@
-import { ContainerRegistry } from './container-registry';
+import { ContainerRegistry } from "./container-registry";
 
-if (!Reflect || !(Reflect as any).metadata) {
-  throw new Error();
+if(!Reflect || !(Reflect as any).getMetadata){
+    throw new Error();
 }
 
-export const container = ContainerRegistry.defaultContainer;
-export default container;
+export const Container = ContainerRegistry.defaultContainer;
+export default Container; 

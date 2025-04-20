@@ -1,5 +1,18 @@
 {
+  "name": "typedi-implementation",
+  "version": "1.0.0",
+  "description": "Implementation of TypeDI core functionality",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.14"
+  },
   "devDependencies": {
-    "typescript": "^5.8.2"
+    "@types/node": "^18.15.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^4.9.5"
   }
 }

@@ -1,10 +1,14 @@
-import { Token } from "../token";
-import { AbstractConstructable } from "./abstract-constructable.type";
-import { Constructable } from "./constructable";
+import { Token } from '../token';
+import { AbstractConstructable } from './abstract-constructable';
+import { Constructable } from './constructable';
 
-export type ServiceIdentifier<T=unknown> =
-| Constructable<T>
-| AbstractConstructable<T>
-| CallableFunction
-| Token<T>
-| string;
+/**
+ * Unique service identifier.
+ * Can be some class type, or string id, or instance of Token.
+ */
+export type ServiceIdentifier<T = unknown> =
+  | Constructable<T>
+  | AbstractConstructable<T>
+  | CallableFunction
+  | Token<T>
+  | string;

@@ -1,23 +1,36 @@
-import { ContainerInstance } from "./container-instance";
-import { ContainerIdentifier } from "./types/container-identfifier";
+import { ContainerInstance } from './container-instance';
+import { EMPTY_VALUE } from './empty-value';
+import { ServiceMetadata } from './interfaces/service-metadata';
+import { ContainerIdentifier } from './types/container-identifier';
+import { ServiceIdentifier } from './types/service-identifier';
+import { ServiceOptions } from './types/service-options';
 
-export class ContainerRegistry {
-    private static readonly containerMap: Map<ContainerIdentifier,ContainerInstance> = new Map();
+export class ContainerRegisty {
+  private static readonly containerMap: Map<ContainerIdentifier, ContainerInstance> = new Map();
+  public static readonly defaultContainer: ContainerInstance = new ContainerInstance('default');
 
-    public static readonly defaultContainer: ContainerInstance = new ContainerInstance('default');
-
-    public static registeredContainer(container: ContainerInstance): void {
-        if(container instanceof ContainerInstance===false){
-            throw new Error('이미존재');
-        }
-        if(!!ContainerRegistry.defaultContainer && container.id === 'default'){
-            throw new Error('das');
-        }
-
-
-        if(this.containerMap.has(container.id)){
-            throw new Error('이미존재');
-        }
-        ContainerRegistry.containerMap.set(container.id, container);
+  public static registerContainer(container: ContainerInstance): void {
+    if (container instanceof ContainerInstance === false) {
+      throw new Error('error');
     }
+
+    if (!!ContainerRegisty.defaultContainer && container.id === 'default') {
+      throw new Error('errror');
+    }
+
+    if (ContainerRegisty.containerMap.has(container.id)) {
+      throw new Error('error');
+    }
+
+    ContainerRegisty.containerMap.set(container.id, container);
+  }
+
+  public static getContainer(id: ContainerIdentifier): ContainerInstance {
+    const registedContainer = this.containerMap.get(id);
+    if (registedContainer === undefined) {
+      throw new Error('error');
+    }
+
+    return registedContainer;
+  }
 }

@@ -1,3 +1,3 @@
 export class Token<T> {
-    constructor(public name?: string){}
+    constructor(public  name? :string){}
 }

@@ -1,12 +1,9 @@
 # JP version read.md | KR version read.md
-- [🇯🇵 日本語版](#typedi-実装-jp)
-- [🇰🇷 한국어판](#typedi-구현-kr)
-
-- [🇯🇵 日本語版](#--typedi-実装-jp)
-- [🇰🇷 한국어판](#--typedi-구현kr)
+- [🇯🇵 日本語版](#jp)
+- [🇰🇷 한국어판](#kr)
 
 ---
-
+<a id="jp"></a>
 # 🛠️ typedi 実装 (JP)
 
 ## 📌 概要
@@ -69,7 +66,7 @@ const controller = new UserController(userService);
 console.log(controller.getUserInfo()); // { id: 1, name: "changhyeon" }
 ```
 
-
+<a id="kr"></a>
 # KR version read.md
 ---
 

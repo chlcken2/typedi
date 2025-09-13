@@ -1,5 +1,9 @@
-1. JP version read.md
-2. KR version read.md
+# JP version read.md | KR version read.md
+
+- [🇯🇵 日本語版](#-typedi-実装-jp)
+- [🇰🇷 한국어판](#-typedi-구현kr)
+
+---
 
 # 🛠️ typedi 実装 (JP)
 
@@ -62,8 +66,12 @@ const controller = new UserController(userService);
 
 console.log(controller.getUserInfo()); // { id: 1, name: "changhyeon" }
 ```
-----------------------------------------------------------------------------------------
-# 🛠️ typedi 구현(KR)
+
+
+# KR version read.md
+---
+
+# 🛠️ typedi 구현 (KR)
 
 ## 📌 개요
 NestJS에서 사용하는 `@Injectable()`, `@Service()`, `@Controller()` 같은 데코레이터 기반 **DI(Dependency Injection)** 가 실제로 어떤 원리로 동작하는지 궁금했습니다.  
@@ -72,7 +80,7 @@ NestJS에서 사용하는 `@Injectable()`, `@Service()`, `@Controller()` 같은 
 ## 🚀 학습 방법
 1. **타입스크립트 공식 문서**를 정독하며 기본기를 다졌습니다.  
 2. `typedi`의 실제 구현 코드를 **30회 이상 직접 타이핑**하여 손에 익혔습니다.  
-3. 단순 암기가 아닌, **TS의 METADATA와 Map<>기반의 class Id, Instance의 저장 원리를 기반으로 학습**했습니다.  
+3. 단순 암기가 아닌, **TS의 METADATA와 Map<> 기반의 class Id, Instance 저장 원리를 이해**하며 학습했습니다.  
 
 ## 🎯 목표
 - `typedi`의 **라이프사이클**과 동작 흐름 이해  
@@ -122,3 +130,4 @@ const userService = container.get(UserService);
 const controller = new UserController(userService);
 
 console.log(controller.getUserInfo()); // { id: 1, name: "changhyeon" }
+```
